@@ -1,0 +1,8 @@
+.*.swp
+doc
+tags
+build
+target
+Cargo.lock
+
+.DS_Store

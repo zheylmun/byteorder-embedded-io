@@ -1,0 +1,146 @@
+name: ci
+on:
+  pull_request:
+    branches:
+    - main
+  push:
+    branches:
+    - main
+  schedule:
+  - cron: '00 01 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test
+    env:
+      CARGO: cargo
+      TARGET:
+      CROSS_VERSION: v0.2.5
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - build: stable
+          os: ubuntu-latest
+          rust: stable
+        - build: beta
+          os: ubuntu-latest
+          rust: beta
+        - build: nightly
+          os: ubuntu-latest
+          rust: nightly
+        - build: macos
+          os: macos-latest
+          rust: stable
+        - build: win-msvc
+          os: windows-latest
+          rust: stable
+        - build: win-gnu
+          os: windows-latest
+          rust: stable-x86_64-gnu
+        - build: stable-x86
+          os: ubuntu-latest
+          rust: stable
+          target: i686-unknown-linux-gnu
+        - build: stable-aarch64
+          os: ubuntu-latest
+          rust: stable
+          target: aarch64-unknown-linux-gnu
+        - build: stable-powerpc64
+          os: ubuntu-latest
+          rust: stable
+          target: powerpc64-unknown-linux-gnu
+        - build: stable-s390x
+          os: ubuntu-latest
+          rust: stable
+          target: s390x-unknown-linux-gnu
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: ${{ matrix.rust }}
+    - name: Use Cross
+      if: matrix.os == 'ubuntu-latest' && matrix.target != ''
+      run: |
+        dir="$RUNNER_TEMP/cross-download"
+        mkdir "$dir"
+        echo "$dir" >> $GITHUB_PATH
+        cd "$dir"
+        curl -LO "https://github.com/cross-rs/cross/releases/download/$CROSS_VERSION/cross-x86_64-unknown-linux-musl.tar.gz"
+        tar xf cross-x86_64-unknown-linux-musl.tar.gz
+        echo "CARGO=cross" >> $GITHUB_ENV
+        echo "TARGET=--target ${{ matrix.target }}" >> $GITHUB_ENV
+    - name: Show command used for Cargo
+      run: |
+        echo "cargo command is: ${{ env.CARGO }}"
+        echo "target flag is: ${{ env.TARGET }}"
+
+    - name: Build (no default features)
+      run: ${{ env.CARGO }} build --verbose --no-default-features $TARGET
+    - name: Build (std)
+      run: ${{ env.CARGO }} build --verbose --features std $TARGET
+    - name: Build (embedded-io)
+      run: ${{ env.CARGO }} build --verbose --features embedded-io $TARGET
+    - name: Build (std + embedded-io)
+      run: ${{ env.CARGO }} build --verbose --features "std,embedded-io" $TARGET
+    - name: Build (embedded-io-async)
+      run: ${{ env.CARGO }} build --verbose --features embedded-io-async $TARGET
+    - name: Build (all features)
+      run: ${{ env.CARGO }} build --verbose --features "std,embedded-io,embedded-io-async" $TARGET
+    - name: Build docs (all features)
+      run: ${{ env.CARGO }} doc --verbose --features "std,embedded-io,embedded-io-async" $TARGET
+
+    - name: Tests (no default, lib only)
+      run: ${{ env.CARGO }} test --verbose --no-default-features --lib $TARGET
+    - name: Tests (std)
+      run: ${{ env.CARGO }} test --verbose --features std $TARGET
+    - name: Tests (embedded-io)
+      run: ${{ env.CARGO }} test --verbose --features embedded-io $TARGET
+    - name: Tests (std + embedded-io)
+      run: ${{ env.CARGO }} test --verbose --features "std,embedded-io" $TARGET
+    - name: Tests (embedded-io-async)
+      run: ${{ env.CARGO }} test --verbose --features embedded-io-async $TARGET
+    - name: Tests (all features)
+      run: ${{ env.CARGO }} test --verbose --features "std,embedded-io,embedded-io-async" $TARGET
+    - name: Tests (async compat)
+      run: ${{ env.CARGO }} test --verbose --features "std,embedded-io-async" --test eio_async_compat $TARGET
+
+  miri:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: nightly
+        components: miri
+    - name: Run tests (std)
+      run: cargo miri test --verbose --features std
+    - name: Run tests (embedded-io)
+      run: cargo miri test --verbose --features embedded-io
+    - name: Run tests (std + embedded-io)
+      run: cargo miri test --verbose --features "std,embedded-io"
+    - name: Run tests (embedded-io-async)
+      run: cargo miri test --verbose --features embedded-io-async
+    - name: Run tests (all features)
+      run: cargo miri test --verbose --features "std,embedded-io,embedded-io-async"
+
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+        components: rustfmt
+    - name: Check formatting
+      run: cargo fmt -- --check
