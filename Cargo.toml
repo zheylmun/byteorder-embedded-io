@@ -1,10 +1,10 @@
 [package]
-name = "embedded_byteorder"
+name = "embedded-io-byteorder"
 version = "0.1.0"
 authors = ["Zach Heylmun <zach@heylmun.com>"]
 description = "Extension of byteorder with embedded-io Read/Write trait support for no_std environments."
-homepage = "https://github.com/zheylmun/embedded_byteorder"
-repository = "https://github.com/zheylmun/embedded_byteorder"
+homepage = "https://github.com/zheylmun/embedded-io-byteorder"
+repository = "https://github.com/zheylmun/embedded-io-byteorder"
 readme = "README.md"
 categories = ["encoding", "parsing", "no-std", "embedded"]
 keywords = ["byte", "endian", "big-endian", "little-endian", "embedded"]
@@ -13,7 +13,7 @@ edition = "2021"
 rust-version = "1.60"
 
 [lib]
-name = "embedded_byteorder"
+name = "embedded_io_byteorder"
 
 [dependencies]
 byteorder = { version = "1", default-features = false }

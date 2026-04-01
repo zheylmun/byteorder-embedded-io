@@ -8,14 +8,14 @@ use std::io::Cursor;
 
 use embedded_io_adapters::std::FromStd;
 
-use embedded_byteorder::{BigEndian, LittleEndian, NativeEndian};
+use embedded_io_byteorder::{BigEndian, LittleEndian, NativeEndian};
 
 // Both trait sets imported under distinct aliases so method resolution picks
 // the right one by receiver type (Cursor vs FromStd<Cursor>).
-use embedded_byteorder::eio::ReadBytesExt as EioRead;
-use embedded_byteorder::eio::WriteBytesExt as EioWrite;
-use embedded_byteorder::io::ReadBytesExt as StdRead;
-use embedded_byteorder::io::WriteBytesExt as StdWrite;
+use embedded_io_byteorder::eio::ReadBytesExt as EioRead;
+use embedded_io_byteorder::eio::WriteBytesExt as EioWrite;
+use embedded_io_byteorder::io::ReadBytesExt as StdRead;
+use embedded_io_byteorder::io::WriteBytesExt as StdWrite;
 
 // -----------------------------------------------------------------------
 // Helpers
