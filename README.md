@@ -1,21 +1,28 @@
 # embedded_byteorder
 
+[![CI](https://github.com/zheylmun/embedded_byteorder/actions/workflows/ci.yml/badge.svg)](https://github.com/zheylmun/embedded_byteorder/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/zheylmun/embedded_byteorder/graph/badge.svg)](https://codecov.io/gh/zheylmun/embedded_byteorder)
+[![crates.io](https://img.shields.io/crates/v/embedded_byteorder.svg)](https://crates.io/crates/embedded_byteorder)
+[![docs.rs](https://docs.rs/embedded_byteorder/badge.svg)](https://docs.rs/embedded_byteorder)
+
 Extension of [byteorder](https://crates.io/crates/byteorder) with
 [embedded-io](https://crates.io/crates/embedded-io) `Read`/`Write` trait
 support for `no_std` environments.
 
-The upstream byteorder crate has [rejected embedded-io support](https://github.com/BurntSushi/byteorder/issues/137).
+The upstream byteorder crate has
+[suggested that there might be an issue with](https://github.com/BurntSushi/byteorder/issues/213)
+embedded-io support.
 This crate re-exports the core `byteorder` types (`ByteOrder`, `BigEndian`,
-`LittleEndian`, etc.) and adds `ReadBytesExt` / `WriteBytesExt`
-implementations for `embedded_io::Read` / `Write` and their async
-counterparts.
+`LittleEndian`, `NativeEndian`, `NetworkEndian`) and adds `ReadBytesExt` /
+`WriteBytesExt` implementations for `embedded_io::Read` / `Write` and their
+async counterparts.
 
 ## Features
 
 | Feature | Default | What it enables |
 |---|---|---|
-| *(none)* | yes | Re-exports `ByteOrder`, `BigEndian`, `LittleEndian` from `byteorder` (always `no_std`) |
-| `std` | no | `ReadBytesExt` / `WriteBytesExt` for `std::io::Read` / `Write` (re-exported from `byteorder`) |
+| *(none)* | yes | Re-exports `ByteOrder`, `BigEndian`, `LittleEndian`, `NativeEndian`, `NetworkEndian` from `byteorder` (always `no_std`) |
+| `std` | no | `ReadBytesExt` / `WriteBytesExt` for `std::io::Read` / `Write` (via `byteorder/std`) |
 | `embedded-io` | no | `ReadBytesExt` / `WriteBytesExt` for `embedded_io::Read` / `Write` |
 | `embedded-io-async` | no | Async `ReadBytesExt` / `WriteBytesExt` for `embedded_io_async::Read` / `Write` (implies `embedded-io`) |
 
@@ -74,8 +81,8 @@ assert_eq!(517, rdr.read_u16::<BigEndian>().unwrap());
 
 ## MSRV
 
-- Base crate (no features): **Rust 1.60**
-- `embedded-io` / `embedded-io-async` features: **Rust 1.81**
+- Base crate (no features): **Rust 1.60** (matches `byteorder`)
+- `embedded-io` / `embedded-io-async` features: **Rust 1.81** (required by `embedded-io 0.7`)
 
 ## License
 
