@@ -56,9 +56,7 @@ pub trait ReadBytesExt: Read {
     /// assert_eq!(5, rdr.read_u8().await.unwrap());
     /// # }
     /// ```
-    async fn read_u8(
-        &mut self,
-    ) -> Result<u8, ReadExactError<Self::Error>> {
+    async fn read_u8(&mut self) -> Result<u8, ReadExactError<Self::Error>> {
         let mut buf = [0; 1];
         self.read_exact(&mut buf).await?;
         Ok(buf[0])
@@ -88,9 +86,7 @@ pub trait ReadBytesExt: Read {
     /// assert_eq!(-5, rdr.read_i8().await.unwrap());
     /// # }
     /// ```
-    async fn read_i8(
-        &mut self,
-    ) -> Result<i8, ReadExactError<Self::Error>> {
+    async fn read_i8(&mut self) -> Result<i8, ReadExactError<Self::Error>> {
         let mut buf = [0; 1];
         self.read_exact(&mut buf).await?;
         Ok(buf[0] as i8)

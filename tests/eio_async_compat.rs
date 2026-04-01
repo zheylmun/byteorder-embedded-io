@@ -219,8 +219,7 @@ macro_rules! qc_write {
                     let mut std_buf = vec![];
                     StdWrite::$method::<BigEndian>(&mut std_buf, n).unwrap();
                     let async_buf = block_on(async {
-                        let mut w =
-                            FromTokio::new(Cursor::new(Vec::new()));
+                        let mut w = FromTokio::new(Cursor::new(Vec::new()));
                         w.$method::<BigEndian>(n).await.unwrap();
                         w.into_inner().into_inner()
                     });
@@ -237,8 +236,7 @@ macro_rules! qc_write {
                     StdWrite::$method::<LittleEndian>(&mut std_buf, n)
                         .unwrap();
                     let async_buf = block_on(async {
-                        let mut w =
-                            FromTokio::new(Cursor::new(Vec::new()));
+                        let mut w = FromTokio::new(Cursor::new(Vec::new()));
                         w.$method::<LittleEndian>(n).await.unwrap();
                         w.into_inner().into_inner()
                     });
@@ -255,8 +253,7 @@ macro_rules! qc_write {
                     StdWrite::$method::<NativeEndian>(&mut std_buf, n)
                         .unwrap();
                     let async_buf = block_on(async {
-                        let mut w =
-                            FromTokio::new(Cursor::new(Vec::new()));
+                        let mut w = FromTokio::new(Cursor::new(Vec::new()));
                         w.$method::<NativeEndian>(n).await.unwrap();
                         w.into_inner().into_inner()
                     });
@@ -302,9 +299,7 @@ macro_rules! qc_write_nbytes {
                         let async_buf = block_on(async {
                             let mut w =
                                 FromTokio::new(Cursor::new(Vec::new()));
-                            w.$method::<BigEndian>(val, nbytes)
-                                .await
-                                .unwrap();
+                            w.$method::<BigEndian>(val, nbytes).await.unwrap();
                             w.into_inner().into_inner()
                         });
                         if std_buf != async_buf {
@@ -538,16 +533,16 @@ mod read {
         read_u128,
         read_u128,
         [
-            0x00, 0x03, 0x43, 0x95, 0x4d, 0x60, 0x86, 0x83, 0x00, 0x03,
-            0x43, 0x95, 0x4d, 0x60, 0x86, 0x83
+            0x00, 0x03, 0x43, 0x95, 0x4d, 0x60, 0x86, 0x83, 0x00, 0x03, 0x43,
+            0x95, 0x4d, 0x60, 0x86, 0x83
         ]
     );
     test_read_128!(
         read_i128,
         read_i128,
         [
-            0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x01
+            0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x01
         ]
     );
 
@@ -563,8 +558,8 @@ mod read {
         #[test]
         fn selected_lengths() {
             let data: &[u8] = &[
-                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
-                0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10,
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,
+                0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10,
             ];
             for nbytes in 1..=16 {
                 let d = &data[..nbytes];
@@ -598,15 +593,69 @@ mod read {
         }
     }
 
-    test_read_into!(read_u16_into, read_u16_into, u16, 4, [0, 1, 2, 3, 4, 5, 6, 7]);
-    test_read_into!(read_u32_into, read_u32_into, u32, 2, [0, 1, 2, 3, 4, 5, 6, 7]);
-    test_read_into!(read_u64_into, read_u64_into, u64, 2, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
-    test_read_into!(read_u128_into, read_u128_into, u128, 1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
-    test_read_into_no_endian!(read_i8_into, read_i8_into, i8, 4, [0x01, 0x80, 0xff, 0x7f]);
-    test_read_into!(read_i16_into, read_i16_into, i16, 4, [0, 1, 0x80, 3, 0xff, 5, 6, 7]);
-    test_read_into!(read_i32_into, read_i32_into, i32, 2, [0, 1, 2, 3, 0x80, 5, 6, 7]);
-    test_read_into!(read_i64_into, read_i64_into, i64, 2, [0, 1, 2, 3, 4, 5, 6, 7, 0x80, 9, 10, 11, 12, 13, 14, 15]);
-    test_read_into!(read_i128_into, read_i128_into, i128, 1, [0x80, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+    test_read_into!(
+        read_u16_into,
+        read_u16_into,
+        u16,
+        4,
+        [0, 1, 2, 3, 4, 5, 6, 7]
+    );
+    test_read_into!(
+        read_u32_into,
+        read_u32_into,
+        u32,
+        2,
+        [0, 1, 2, 3, 4, 5, 6, 7]
+    );
+    test_read_into!(
+        read_u64_into,
+        read_u64_into,
+        u64,
+        2,
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    );
+    test_read_into!(
+        read_u128_into,
+        read_u128_into,
+        u128,
+        1,
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    );
+    test_read_into_no_endian!(
+        read_i8_into,
+        read_i8_into,
+        i8,
+        4,
+        [0x01, 0x80, 0xff, 0x7f]
+    );
+    test_read_into!(
+        read_i16_into,
+        read_i16_into,
+        i16,
+        4,
+        [0, 1, 0x80, 3, 0xff, 5, 6, 7]
+    );
+    test_read_into!(
+        read_i32_into,
+        read_i32_into,
+        i32,
+        2,
+        [0, 1, 2, 3, 0x80, 5, 6, 7]
+    );
+    test_read_into!(
+        read_i64_into,
+        read_i64_into,
+        i64,
+        2,
+        [0, 1, 2, 3, 4, 5, 6, 7, 0x80, 9, 10, 11, 12, 13, 14, 15]
+    );
+    test_read_into!(
+        read_i128_into,
+        read_i128_into,
+        i128,
+        1,
+        [0x80, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    );
 
     mod read_f32_into {
         use super::*;
@@ -626,10 +675,7 @@ mod read {
                     .await
                     .unwrap();
             });
-            assert_eq!(
-                std_dst.map(f32::to_bits),
-                async_dst.map(f32::to_bits)
-            );
+            assert_eq!(std_dst.map(f32::to_bits), async_dst.map(f32::to_bits));
         }
     }
 
@@ -639,8 +685,8 @@ mod read {
         #[test]
         fn big_endian() {
             let data: &[u8] = &[
-                0x40, 0x09, 0x21, 0xfb, 0x54, 0x44, 0x2d, 0x18, 0x3f,
-                0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x40, 0x09, 0x21, 0xfb, 0x54, 0x44, 0x2d, 0x18, 0x3f, 0xf0,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             ];
             let mut std_dst = [0.0f64; 2];
             let mut async_dst = [0.0f64; 2];
@@ -653,10 +699,7 @@ mod read {
                     .await
                     .unwrap();
             });
-            assert_eq!(
-                std_dst.map(f64::to_bits),
-                async_dst.map(f64::to_bits)
-            );
+            assert_eq!(std_dst.map(f64::to_bits), async_dst.map(f64::to_bits));
         }
     }
 }
@@ -711,7 +754,12 @@ mod write {
     qc_write!(write_u48, u64, write_u48);
     qc_write!(write_i48, i64, write_i48);
 
-    test_write_128!(write_u128, u128, write_u128, 0x0003_4395_4d60_8683_0003_4395_4d60_8683);
+    test_write_128!(
+        write_u128,
+        u128,
+        write_u128,
+        0x0003_4395_4d60_8683_0003_4395_4d60_8683
+    );
     test_write_128!(write_i128, i128, write_i128, i128::MIN + 1);
 
     qc_write_float!(write_f32, f32, write_f32);

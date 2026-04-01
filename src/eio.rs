@@ -1096,10 +1096,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x02, 0x05, 0x03, 0x00]);
     /// ```
     #[inline]
-    fn write_u16<T: ByteOrder>(
-        &mut self,
-        n: u16,
-    ) -> Result<(), Self::Error> {
+    fn write_u16<T: ByteOrder>(&mut self, n: u16) -> Result<(), Self::Error> {
         let mut buf = [0; 2];
         T::write_u16(&mut buf, n);
         self.write_all(&buf)
@@ -1129,10 +1126,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x00, 0xc1, 0xff, 0x7c]);
     /// ```
     #[inline]
-    fn write_i16<T: ByteOrder>(
-        &mut self,
-        n: i16,
-    ) -> Result<(), Self::Error> {
+    fn write_i16<T: ByteOrder>(&mut self, n: i16) -> Result<(), Self::Error> {
         let mut buf = [0; 2];
         T::write_i16(&mut buf, n);
         self.write_all(&buf)
@@ -1162,10 +1156,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x00, 0x01, 0x0b, 0x01, 0xd5, 0x2f]);
     /// ```
     #[inline]
-    fn write_u24<T: ByteOrder>(
-        &mut self,
-        n: u32,
-    ) -> Result<(), Self::Error> {
+    fn write_u24<T: ByteOrder>(&mut self, n: u32) -> Result<(), Self::Error> {
         let mut buf = [0; 3];
         T::write_u24(&mut buf, n);
         self.write_all(&buf)
@@ -1195,10 +1186,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0xff, 0x7a, 0x33, 0x01, 0xd5, 0x2f]);
     /// ```
     #[inline]
-    fn write_i24<T: ByteOrder>(
-        &mut self,
-        n: i32,
-    ) -> Result<(), Self::Error> {
+    fn write_i24<T: ByteOrder>(&mut self, n: i32) -> Result<(), Self::Error> {
         let mut buf = [0; 3];
         T::write_i24(&mut buf, n);
         self.write_all(&buf)
@@ -1227,10 +1215,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x00, 0x00, 0x01, 0x0b]);
     /// ```
     #[inline]
-    fn write_u32<T: ByteOrder>(
-        &mut self,
-        n: u32,
-    ) -> Result<(), Self::Error> {
+    fn write_u32<T: ByteOrder>(&mut self, n: u32) -> Result<(), Self::Error> {
         let mut buf = [0; 4];
         T::write_u32(&mut buf, n);
         self.write_all(&buf)
@@ -1259,10 +1244,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0xff, 0xff, 0x7a, 0x33]);
     /// ```
     #[inline]
-    fn write_i32<T: ByteOrder>(
-        &mut self,
-        n: i32,
-    ) -> Result<(), Self::Error> {
+    fn write_i32<T: ByteOrder>(&mut self, n: i32) -> Result<(), Self::Error> {
         let mut buf = [0; 4];
         T::write_i32(&mut buf, n);
         self.write_all(&buf)
@@ -1291,10 +1273,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x2f, 0x9f, 0x17, 0x40, 0x3a, 0xac]);
     /// ```
     #[inline]
-    fn write_u48<T: ByteOrder>(
-        &mut self,
-        n: u64,
-    ) -> Result<(), Self::Error> {
+    fn write_u48<T: ByteOrder>(&mut self, n: u64) -> Result<(), Self::Error> {
         let mut buf = [0; 6];
         T::write_u48(&mut buf, n);
         self.write_all(&buf)
@@ -1323,10 +1302,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x9d, 0x71, 0xab, 0xe7, 0x97, 0x8f]);
     /// ```
     #[inline]
-    fn write_i48<T: ByteOrder>(
-        &mut self,
-        n: i64,
-    ) -> Result<(), Self::Error> {
+    fn write_i48<T: ByteOrder>(&mut self, n: i64) -> Result<(), Self::Error> {
         let mut buf = [0; 6];
         T::write_i48(&mut buf, n);
         self.write_all(&buf)
@@ -1355,10 +1331,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x00, 0x03, 0x43, 0x95, 0x4d, 0x60, 0x86, 0x83]);
     /// ```
     #[inline]
-    fn write_u64<T: ByteOrder>(
-        &mut self,
-        n: u64,
-    ) -> Result<(), Self::Error> {
+    fn write_u64<T: ByteOrder>(&mut self, n: u64) -> Result<(), Self::Error> {
         let mut buf = [0; 8];
         T::write_u64(&mut buf, n);
         self.write_all(&buf)
@@ -1387,10 +1360,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
     /// ```
     #[inline]
-    fn write_i64<T: ByteOrder>(
-        &mut self,
-        n: i64,
-    ) -> Result<(), Self::Error> {
+    fn write_i64<T: ByteOrder>(&mut self, n: i64) -> Result<(), Self::Error> {
         let mut buf = [0; 8];
         T::write_i64(&mut buf, n);
         self.write_all(&buf)
@@ -1550,10 +1520,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x40, 0x49, 0x0f, 0xdb]);
     /// ```
     #[inline]
-    fn write_f32<T: ByteOrder>(
-        &mut self,
-        n: f32,
-    ) -> Result<(), Self::Error> {
+    fn write_f32<T: ByteOrder>(&mut self, n: f32) -> Result<(), Self::Error> {
         let mut buf = [0; 4];
         T::write_f32(&mut buf, n);
         self.write_all(&buf)
@@ -1585,10 +1552,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x40, 0x09, 0x21, 0xfb, 0x54, 0x44, 0x2d, 0x18]);
     /// ```
     #[inline]
-    fn write_f64<T: ByteOrder>(
-        &mut self,
-        n: f64,
-    ) -> Result<(), Self::Error> {
+    fn write_f64<T: ByteOrder>(&mut self, n: f64) -> Result<(), Self::Error> {
         let mut buf = [0; 8];
         T::write_f64(&mut buf, n);
         self.write_all(&buf)
