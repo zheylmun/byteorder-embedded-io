@@ -103,6 +103,18 @@ jobs:
       - name: Run tests
         run: cargo miri test --verbose --all-features
 
+  semver:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install cargo-semver-checks
+        uses: taiki-e/install-action@cargo-semver-checks
+      - name: Check semver
+        run: cargo semver-checks --all-features
+
   rustfmt:
     runs-on: ubuntu-latest
     steps:
