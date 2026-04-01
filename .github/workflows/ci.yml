@@ -115,6 +115,18 @@ jobs:
       - name: Check semver
         run: cargo semver-checks --all-features
 
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Clippy (pedantic)
+        run: cargo clippy --all-features -- -D warnings -W clippy::pedantic
+
   rustfmt:
     runs-on: ubuntu-latest
     steps:

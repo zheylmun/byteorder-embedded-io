@@ -86,6 +86,7 @@ pub trait ReadBytesExt: Read {
     /// assert_eq!(-5, rdr.read_i8().await.unwrap());
     /// # }
     /// ```
+    #[allow(clippy::cast_possible_wrap)]
     async fn read_i8(&mut self) -> Result<i8, ReadExactError<Self::Error>> {
         let mut buf = [0; 1];
         self.read_exact(&mut buf).await?;
@@ -499,6 +500,7 @@ pub trait WriteBytesExt: Write {
     }
 
     /// Writes a signed 8 bit integer to the underlying writer.
+    #[allow(clippy::cast_sign_loss)]
     async fn write_i8(&mut self, n: i8) -> Result<(), Self::Error> {
         self.write_all(&[n as u8]).await
     }
@@ -713,8 +715,6 @@ impl<W: Write + ?Sized> WriteBytesExt for W {}
 /// of the binary representation of any `Copy` type. Use with care. It's
 /// intended to be called only where `T` is a numeric type.
 unsafe fn slice_to_u8_mut<T: Copy>(slice: &mut [T]) -> &mut [u8] {
-    use core::mem::size_of;
-
-    let len = size_of::<T>() * slice.len();
-    core::slice::from_raw_parts_mut(slice.as_mut_ptr() as *mut u8, len)
+    let len = core::mem::size_of_val(slice);
+    core::slice::from_raw_parts_mut(slice.as_mut_ptr().cast::<u8>(), len)
 }

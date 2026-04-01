@@ -76,6 +76,7 @@ pub trait ReadBytesExt: Read {
     /// assert_eq!(-5, rdr.read_i8().unwrap());
     /// ```
     #[inline]
+    #[allow(clippy::cast_possible_wrap)]
     fn read_i8(&mut self) -> Result<i8, ReadExactError<Self::Error>> {
         let mut buf = [0; 1];
         self.read_exact(&mut buf)?;
@@ -468,6 +469,12 @@ pub trait ReadBytesExt: Read {
     }
 
     /// Reads an unsigned n-bytes integer from the underlying reader.
+    ///
+    /// # Errors
+    ///
+    /// This method returns the same errors as [`Read::read_exact`].
+    ///
+    /// [`Read::read_exact`]: https://docs.rs/embedded-io/0.7/embedded_io/trait.Read.html#method.read_exact
     #[inline]
     fn read_uint128<T: ByteOrder>(
         &mut self,
@@ -479,6 +486,12 @@ pub trait ReadBytesExt: Read {
     }
 
     /// Reads a signed n-bytes integer from the underlying reader.
+    ///
+    /// # Errors
+    ///
+    /// This method returns the same errors as [`Read::read_exact`].
+    ///
+    /// [`Read::read_exact`]: https://docs.rs/embedded-io/0.7/embedded_io/trait.Read.html#method.read_exact
     #[inline]
     fn read_int128<T: ByteOrder>(
         &mut self,
@@ -1068,6 +1081,7 @@ pub trait WriteBytesExt: Write {
     /// assert_eq!(buf, [0x02, 0xfb]);
     /// ```
     #[inline]
+    #[allow(clippy::cast_sign_loss)]
     fn write_i8(&mut self, n: i8) -> Result<(), Self::Error> {
         self.write_all(&[n as u8])
     }
@@ -1367,6 +1381,12 @@ pub trait WriteBytesExt: Write {
     }
 
     /// Writes an unsigned 128 bit integer to the underlying writer.
+    ///
+    /// # Errors
+    ///
+    /// This method returns the same errors as [`Write::write_all`].
+    ///
+    /// [`Write::write_all`]: https://docs.rs/embedded-io/0.7/embedded_io/trait.Write.html#method.write_all
     #[inline]
     fn write_u128<T: ByteOrder>(
         &mut self,
@@ -1378,6 +1398,12 @@ pub trait WriteBytesExt: Write {
     }
 
     /// Writes a signed 128 bit integer to the underlying writer.
+    ///
+    /// # Errors
+    ///
+    /// This method returns the same errors as [`Write::write_all`].
+    ///
+    /// [`Write::write_all`]: https://docs.rs/embedded-io/0.7/embedded_io/trait.Write.html#method.write_all
     #[inline]
     fn write_i128<T: ByteOrder>(
         &mut self,
@@ -1466,6 +1492,14 @@ pub trait WriteBytesExt: Write {
 
     /// Writes an unsigned n-bytes integer to the underlying writer.
     ///
+    /// # Errors
+    ///
+    /// This method returns the same errors as [`Write::write_all`].
+    ///
+    /// [`Write::write_all`]: https://docs.rs/embedded-io/0.7/embedded_io/trait.Write.html#method.write_all
+    ///
+    /// # Panics
+    ///
     /// If the given integer is not representable in the given number of
     /// bytes, this method panics. If `nbytes > 16`, this method panics.
     #[inline]
@@ -1480,6 +1514,14 @@ pub trait WriteBytesExt: Write {
     }
 
     /// Writes a signed n-bytes integer to the underlying writer.
+    ///
+    /// # Errors
+    ///
+    /// This method returns the same errors as [`Write::write_all`].
+    ///
+    /// [`Write::write_all`]: https://docs.rs/embedded-io/0.7/embedded_io/trait.Write.html#method.write_all
+    ///
+    /// # Panics
     ///
     /// If the given integer is not representable in the given number of
     /// bytes, this method panics. If `nbytes > 16`, this method panics.
@@ -1570,8 +1612,6 @@ impl<W: Write + ?Sized> WriteBytesExt for W {}
 /// of the binary representation of any `Copy` type. Use with care. It's
 /// intended to be called only where `T` is a numeric type.
 unsafe fn slice_to_u8_mut<T: Copy>(slice: &mut [T]) -> &mut [u8] {
-    use core::mem::size_of;
-
-    let len = size_of::<T>() * slice.len();
-    core::slice::from_raw_parts_mut(slice.as_mut_ptr() as *mut u8, len)
+    let len = core::mem::size_of_val(slice);
+    core::slice::from_raw_parts_mut(slice.as_mut_ptr().cast::<u8>(), len)
 }
