@@ -2,12 +2,12 @@ name: ci
 on:
   pull_request:
     branches:
-    - main
+      - main
   push:
     branches:
-    - main
+      - main
   schedule:
-  - cron: '00 01 * * *'
+    - cron: "00 01 * * *"
 
 permissions:
   contents: read
@@ -20,30 +20,30 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - build: linux
-          os: ubuntu-latest
-          rust: stable
-        - build: macos
-          os: macos-latest
-          rust: stable
-        - build: windows
-          os: windows-latest
-          rust: stable
+          - build: linux
+            os: ubuntu-latest
+            rust: stable
+          - build: macos
+            os: macos-latest
+            rust: stable
+          - build: windows
+            os: windows-latest
+            rust: stable
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    - name: Install Rust
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: ${{ matrix.rust }}
-    - name: Build (no default features)
-      run: cargo build --verbose --no-default-features
-    - name: Build (all features)
-      run: cargo build --verbose --all-features
-    - name: Tests (no default, lib only)
-      run: cargo test --verbose --no-default-features --lib
-    - name: Tests (all features)
-      run: cargo test --verbose --all-features
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+      - name: Build (no default features)
+        run: cargo build --verbose --no-default-features
+      - name: Build (all features)
+        run: cargo build --verbose --all-features
+      - name: Tests (no default, lib only)
+        run: cargo test --verbose --no-default-features --lib
+      - name: Tests (all features)
+        run: cargo test --verbose --all-features
 
   no-std:
     name: no_std (${{ matrix.target }})
@@ -52,44 +52,65 @@ jobs:
       fail-fast: false
       matrix:
         target:
-        - thumbv7em-none-eabihf   # Cortex-M4/M7
-        - thumbv6m-none-eabi      # Cortex-M0/M0+
-        - armv7a-none-eabi        # Cortex-A (bare metal)
-        - armv7r-none-eabihf      # Cortex-R
+          - thumbv7em-none-eabihf # Cortex-M4/M7
+          - thumbv6m-none-eabi # Cortex-M0/M0+
+          - armv7a-none-eabi # Cortex-A (bare metal)
+          - armv7r-none-eabihf # Cortex-R
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    - name: Install Rust
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        targets: ${{ matrix.target }}
-    - name: Build (no default features)
-      run: cargo build --verbose --no-default-features --target ${{ matrix.target }}
-    - name: Build (embedded-io)
-      run: cargo build --verbose --features embedded-io --target ${{ matrix.target }}
-    - name: Build (embedded-io-async)
-      run: cargo build --verbose --features embedded-io-async --target ${{ matrix.target }}
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Build (no default features)
+        run: cargo build --verbose --no-default-features --target ${{ matrix.target }}
+      - name: Build (embedded-io)
+        run: cargo build --verbose --features embedded-io --target ${{ matrix.target }}
+      - name: Build (embedded-io-async)
+        run: cargo build --verbose --features embedded-io-async --target ${{ matrix.target }}
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+      - name: Generate coverage
+        run: cargo llvm-cov --all-features --lcov --output-path lcov.info
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: lcov.info
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   miri:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    - name: Install Rust
-      uses: dtolnay/rust-toolchain@nightly
-      with:
-        components: miri
-    - name: Run tests
-      run: cargo miri test --verbose --all-features
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: miri
+      - name: Run tests
+        run: cargo miri test --verbose --all-features
 
   rustfmt:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    - name: Install Rust
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        components: rustfmt
-    - name: Check formatting
-      run: cargo fmt -- --check
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check formatting
+        run: cargo fmt -- --check
