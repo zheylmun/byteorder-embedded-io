@@ -4,7 +4,7 @@ Extension of the [`byteorder`] crate with [`embedded-io`] support for
 
 This crate re-exports the core [`ByteOrder`] trait, [`BigEndian`],
 [`LittleEndian`], and related types from [`byteorder`], and adds
-[`ReadBytesExt`] and [`WriteBytesExt`] implementations for
+`ReadBytesExt` and `WriteBytesExt` implementations for
 [`embedded_io::Read`] / [`embedded_io::Write`] and their async
 counterparts.
 
@@ -13,15 +13,15 @@ counterparts.
 | Module | Feature required | Trait source |
 |---|---|---|
 | crate root (re-exports) | *(none)* | `byteorder` core types |
-| [`io`] | `std` | `byteorder::ReadBytesExt` / `WriteBytesExt` for `std::io` |
-| [`eio`] | `embedded-io` | `ReadBytesExt` / `WriteBytesExt` for `embedded_io` |
-| [`eio_async`] | `embedded-io-async` | async `ReadBytesExt` / `WriteBytesExt` for `embedded_io_async` |
-| [`adapters`] | `adapters` | [`FromStd`](adapters::FromStd) / [`ToStd`](adapters::ToStd) bridging `std::io` ↔ `embedded-io` |
+| `io` | `std` | `byteorder::ReadBytesExt` / `WriteBytesExt` for `std::io` |
+| `eio` | `embedded-io` | `ReadBytesExt` / `WriteBytesExt` for `embedded_io` |
+| `eio_async` | `embedded-io-async` | async `ReadBytesExt` / `WriteBytesExt` for `embedded_io_async` |
+| `adapters` | `adapters` | `FromStd` / `ToStd` bridging `std::io` ↔ `embedded-io` |
 
 When the `embedded-io` feature is active, the `eio` traits and the core
-`embedded-io` types ([`Read`], [`Write`], [`ErrorType`], [`ReadExactError`])
+`embedded-io` types (`Read`, `Write`, `ErrorType`, `ReadExactError`)
 are re-exported at the crate root for convenience. When `embedded-io-async`
-is active, [`AsyncRead`] and [`AsyncWrite`] are also re-exported.
+is active, `AsyncRead` and `AsyncWrite` are also re-exported.
 
 # Examples
 
@@ -44,11 +44,8 @@ due to the `embedded-io` dependency.
 
 [`byteorder`]: https://crates.io/crates/byteorder
 [`embedded-io`]: https://crates.io/crates/embedded-io
-[`ByteOrder`]: trait.ByteOrder.html
-[`BigEndian`]: enum.BigEndian.html
-[`LittleEndian`]: enum.LittleEndian.html
-[`ReadBytesExt`]: trait.ReadBytesExt.html
-[`WriteBytesExt`]: trait.WriteBytesExt.html
+[`embedded_io::Read`]: https://docs.rs/embedded-io/0.7/embedded_io/trait.Read.html
+[`embedded_io::Write`]: https://docs.rs/embedded-io/0.7/embedded_io/trait.Write.html
 */
 
 #![deny(missing_docs)]
