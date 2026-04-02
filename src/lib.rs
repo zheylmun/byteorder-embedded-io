@@ -16,6 +16,7 @@ counterparts.
 | [`io`] | `std` | `byteorder::ReadBytesExt` / `WriteBytesExt` for `std::io` |
 | [`eio`] | `embedded-io` | `ReadBytesExt` / `WriteBytesExt` for `embedded_io` |
 | [`eio_async`] | `embedded-io-async` | async `ReadBytesExt` / `WriteBytesExt` for `embedded_io_async` |
+| [`adapters`] | `adapters` | [`FromStd`](adapters::FromStd) / [`ToStd`](adapters::ToStd) bridging `std::io` ↔ `embedded-io` |
 
 When the `embedded-io` feature is active, the `eio` traits and the core
 `embedded-io` types ([`Read`], [`Write`], [`ErrorType`], [`ReadExactError`])
@@ -71,6 +72,30 @@ pub mod eio;
 #[cfg(feature = "embedded-io-async")]
 #[cfg_attr(docsrs, doc(cfg(feature = "embedded-io-async")))]
 pub mod eio_async;
+
+/// Adapters between `std::io` and `embedded-io` traits.
+///
+/// Re-exports [`FromStd`](adapters::FromStd) and [`ToStd`](adapters::ToStd)
+/// from [`embedded-io-adapters`](https://crates.io/crates/embedded-io-adapters),
+/// making it easy to bridge `std::io` and `embedded-io` in projects that
+/// target both desktop and embedded.
+///
+/// # Examples
+///
+/// Wrap a `std::io::Cursor` so it can be used with [`ReadBytesExt`]:
+///
+/// ```rust
+/// use byteorder_embedded_io::{BigEndian, ReadBytesExt};
+/// use byteorder_embedded_io::adapters::FromStd;
+///
+/// let mut rdr = FromStd::new(std::io::Cursor::new(vec![0, 0, 1, 0]));
+/// assert_eq!(256, rdr.read_u32::<BigEndian>().unwrap());
+/// ```
+#[cfg(feature = "adapters")]
+#[cfg_attr(docsrs, doc(cfg(feature = "adapters")))]
+pub mod adapters {
+    pub use embedded_io_adapters::std::{FromStd, ToStd};
+}
 
 // When embedded-io is active, re-export its traits at the crate root for
 // convenience (mirrors how upstream byteorder puts std::io traits at root).
