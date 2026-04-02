@@ -17,8 +17,10 @@ counterparts.
 | [`eio`] | `embedded-io` | `ReadBytesExt` / `WriteBytesExt` for `embedded_io` |
 | [`eio_async`] | `embedded-io-async` | async `ReadBytesExt` / `WriteBytesExt` for `embedded_io_async` |
 
-When the `embedded-io` feature is active, the `eio` traits are also
-re-exported at the crate root for convenience.
+When the `embedded-io` feature is active, the `eio` traits and the core
+`embedded-io` types ([`Read`], [`Write`], [`ErrorType`], [`ReadExactError`])
+are re-exported at the crate root for convenience. When `embedded-io-async`
+is active, [`AsyncRead`] and [`AsyncWrite`] are also re-exported.
 
 # Examples
 
@@ -78,4 +80,8 @@ pub use crate::eio::{ReadBytesExt, WriteBytesExt};
 
 #[cfg(feature = "embedded-io")]
 #[cfg_attr(docsrs, doc(cfg(feature = "embedded-io")))]
-pub use embedded_io::ReadExactError;
+pub use embedded_io::{ErrorType, Read, ReadExactError, Write};
+
+#[cfg(feature = "embedded-io-async")]
+#[cfg_attr(docsrs, doc(cfg(feature = "embedded-io-async")))]
+pub use embedded_io_async::{Read as AsyncRead, Write as AsyncWrite};
